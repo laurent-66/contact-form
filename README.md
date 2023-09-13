@@ -23,4 +23,3 @@ Les règles de gestion suivantes sont à mettre en place :
 Il vous est demandé de mettre en place la solution sur la base du Framework Symfony.
 
 
-test
