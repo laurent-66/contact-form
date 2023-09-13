@@ -24,6 +24,34 @@ class RequestContactRepository extends ServiceEntityRepository
 //    /**
 //     * @return RequestContact[] Returns an array of RequestContact objects
 //     */
+   public function getRequestCompleted($id): array
+   {
+       return $this->createQueryBuilder('r')
+           ->andWhere('r.exampleField = :id')
+           ->setParameter('id', $id)
+           ->orderBy('r.id', 'ASC')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
+
+    //    /**
+    //     * @return RequestContact[] Returns an array of RequestContact objects
+    //     */
+    public function getRequestToMake($id): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.exampleField = :id')
+            ->setParameter('id', $id)
+            ->orderBy('r.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+//    /**
+//     * @return RequestContact[] Returns an array of RequestContact objects
+//     */
 //    public function findByExampleField($value): array
 //    {
 //        return $this->createQueryBuilder('r')
