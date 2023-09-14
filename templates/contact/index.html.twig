@@ -5,23 +5,39 @@
 {% block body %}
 <div class="container-fluid">
   <h2 class="text-center m-5">contact</h2>
-  <h3>Nom : {{ contact.lastName }}</h3>
-  <h3>Prénom : {{ contact.firstName }}</h3>
-  <h3>Email : {{ contact.email }}</h3>
-  {# <h3>Nombre de demande répondue : {{ requestCompleted }}</h3>
-  <h3>Nombre de demande a faire : {{ requestCompleted }}</h3> #}
+  <div class="container my-4">
+    <div class="row">
+      <div class="col-sm-12 col-md-6 infoContact ">
+        <div class="backgroundComment border border-light bg bg-light p-5">
+          <h4>Nom : <strong> {{ contact.lastName }}</strong></h4>
+          <h4>Prénom :  <strong> {{ contact.firstName }} </strong></h4>
+          <h4>Email : <strong> {{ contact.email }}</strong> </h4>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 backgroundComment border border-light bg bg-light p-5">
+        <div class="backgroundComment border border-light bg bg-light">
+          <h4 class= "text-success"><strong>Demande répondue : </strong> {{ requestCompleted }}</h3>
+          <h4 class="text-danger"><strong>Demande a faire : </strong> {{ requestToMake }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="container">
     <form action="">
       <div class="form-check">
-      {% for item in requestsContent %}
-        <input class="form-check-input" type="checkbox" value="" id="request">
-        <label class="form-check-label text-dark" for="request">
-          {{ item }}
-        </label>
+      {% for item in requestAll %}
+      <div class="row ">
+        <div class="col-12 backgroundComment border border-light bg bg-light px-5 py-3 my-2">
+          <input class="form-check-input" type="checkbox" value="" id="request">
+          <label class="form-check-label text-dark" for="request">
+            {{ item.contentText }}
+          </label>
+        </div>
+      </div>
       {% endfor %}
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary mt-5">valider</button>
     </form>
   </div>
 </div>

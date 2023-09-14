@@ -26,7 +26,6 @@ class AppFixtures extends Fixture
             $contact = new Contact();
             $firstName = $faker->firstName();
             $lastName = $faker->lastName();
-
             $contact->setFirstName($firstName);
             $contact->setLastName($lastName);
             $contact->setEmail($firstName.'@'.$lastName.'.fr'); 
@@ -36,12 +35,17 @@ class AppFixtures extends Fixture
         }
 
         for ($i = 1; $i < 6; $i++) {
-            $requestContact = new RequestContact();
-            $requestContact->setContentText($faker->paragraph());
-            $requestContact->setIsValidated(false); 
-            $requestContact->setContact($this->contactRepository->find($i));                  
-            $manager->persist($requestContact);
-            $manager->flush();
+            $j = 0;
+            while ($j < 3) {
+                $requestContact = new RequestContact();
+
+                $requestContact->setContentText($faker->paragraph());
+                $requestContact->setIsValidated(false); 
+                $requestContact->setContact($this->contactRepository->find($i));                  
+                $manager->persist($requestContact);
+                $manager->flush();
+                $j++;
+            }
         }
 
     }
