@@ -45,16 +45,15 @@ class ContactController extends AbstractController
     public function contact($id): Response
     {
         $contact = $this->contactRepository->find($id);
-        $requestsContent = $this->requestContactRepository->find($id);
-        // dd($contact);
-        // $requestCompleted = count($this->contactRepository->getRequestCompleted($id));
-        // $requestToMake = count($this->contactRepository->getRequestToMake($id));
+        $requestAll = $this->requestContactRepository->getRequestAll($id);
+        $requestCompleted = count($this->requestContactRepository->getRequestCompleted($id));
+        $requestToMake = count($this->requestContactRepository->getRequestToMake($id));
 
         return $this->render('contact/index.html.twig', [
             'contact' => $contact,
-            'requestsContent' => $requestsContent,
-            // 'requestCompleted' => $requestCompleted,
-            // 'requestToMake' => $requestToMake,
+            'requestAll' => $requestAll,
+            'requestCompleted' => $requestCompleted,
+            'requestToMake' => $requestToMake,
         ]);
     }
 

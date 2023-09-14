@@ -21,29 +21,46 @@ class RequestContactRepository extends ServiceEntityRepository
         parent::__construct($registry, RequestContact::class);
     }
 
-//    /**
-//     * @return RequestContact[] Returns an array of RequestContact objects
-//     */
-   public function getRequestCompleted($id): array
+   /**
+    * @return RequestAll[] Returns an array of RequestAll objects
+    */
+   public function getRequestAll($id): array
    {
        return $this->createQueryBuilder('r')
-           ->andWhere('r.exampleField = :id')
+           ->andWhere('r.contact = :id')
            ->setParameter('id', $id)
-           ->orderBy('r.id', 'ASC')
+           ->orderBy('r.contact', 'ASC')
+           ->setMaxResults(10)
            ->getQuery()
            ->getResult()
        ;
    }
 
-    //    /**
-    //     * @return RequestContact[] Returns an array of RequestContact objects
-    //     */
+   /**
+    * @return RequestCompleted[] Returns an array of RequestCompleted objects
+    */
+   public function getRequestCompleted($id): array
+   {
+       return $this->createQueryBuilder('r')
+           ->andWhere('r.contact = :id') 
+           ->setParameter('id', $id)         
+           ->andWhere('r.isValidated = :boolean')
+           ->setParameter('boolean', true)
+           ->getQuery()
+           ->getResult()
+       ;
+   }
+
+   /**
+    * @return RequestToMake[] Returns an array of RequestToMake objects
+    */
     public function getRequestToMake($id): array
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :id')
-            ->setParameter('id', $id)
-            ->orderBy('r.id', 'ASC')
+            ->andWhere('r.contact = :id') 
+            ->setParameter('id', $id)            
+            ->andWhere('r.isValidated = :boolean')
+            ->setParameter('boolean', false)
             ->getQuery()
             ->getResult()
         ;
