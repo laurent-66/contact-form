@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Contact;
+use App\Form\ContactFormType;
+use App\Entity\RequestContact;
 use App\Form\RequestContactType;
 use App\Repository\ContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +34,61 @@ class ContactController extends AbstractController
         $this->contactRepository = $contactRepository;
         $this->requestContactRepository = $requestContactRepository;
     } 
+
+    #[Route('/', name: 'contact-form')]
+    public function createContactForm(Request $request): Response
+    {
+        $requestcontact = new RequestContact();
+        
+        $form = $this->createForm(ContactFormType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $data = $form->getData();
+            $email = $data->getEmail();
+
+            $contact = $this->contactRepository->findOneByEmail($email);
+
+            if($contact){
+                echo ' l\'email existe';
+
+                $requestcontact->setContentText($data->getComment());
+                $this->entityManager->persist($requestcontact);
+                $this->entityManager->flush();
+
+                $contact->addRequestContact($requestcontact);
+
+                $this->entityManager->persist($contact);
+                $this->entityManager->flush();
+
+
+            }else {
+                echo ' l\'email n\'existe pas';
+
+                $requestcontact->setContentText($data->getComment());
+                $this->entityManager->persist($requestcontact);
+                $this->entityManager->flush();
+
+                $contact = new Contact();
+                $contact->setFirstName($data->getFirstName());
+                $contact->setLastName($data->getLastName());
+                $contact->setEmail($data->getEmail());
+                $contact->addRequestContact($requestcontact);
+                $this->entityManager->persist($contact);
+                $this->entityManager->flush();
+            }
+
+            $this->addFlash('success', 'votre demande à bien été envoyé');
+
+            return $this->redirectToRoute('contact-form');
+        }
+
+        return $this->renderForm('contactForm/index.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
 
 
     #[Route('/admin/contacts', name: 'contact-list')]
