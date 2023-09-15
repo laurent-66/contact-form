@@ -6,14 +6,13 @@ use App\Entity\Contact;
 use App\Form\ContactFormType;
 use App\Entity\RequestContact;
 use App\Form\RequestContactType;
+use App\Service\ExportContactJson;
 use App\Repository\ContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\RequestContactRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ContactController extends AbstractController
@@ -26,7 +25,7 @@ class ContactController extends AbstractController
     public function __construct(
         EntityManagerInterface $entityManager,
         ContactRepository $contactRepository,
-        RequestContactRepository $requestContactRepository
+        RequestContactRepository $requestContactRepository,
 
     ) {
 
@@ -36,7 +35,7 @@ class ContactController extends AbstractController
     } 
 
     #[Route('/', name: 'contact-form')]
-    public function createContactForm(Request $request): Response
+    public function createContactForm(Request $request ): Response
     {
         $requestcontact = new RequestContact();
         
@@ -51,7 +50,6 @@ class ContactController extends AbstractController
             $contact = $this->contactRepository->findOneByEmail($email);
 
             if($contact){
-                echo ' l\'email existe';
 
                 $requestcontact->setContentText($data->getComment());
                 $this->entityManager->persist($requestcontact);
@@ -64,7 +62,6 @@ class ContactController extends AbstractController
 
 
             }else {
-                echo ' l\'email n\'existe pas';
 
                 $requestcontact->setContentText($data->getComment());
                 $this->entityManager->persist($requestcontact);
@@ -76,10 +73,20 @@ class ContactController extends AbstractController
                 $contact->setEmail($data->getEmail());
                 $contact->addRequestContact($requestcontact);
                 $this->entityManager->persist($contact);
-                $this->entityManager->flush();
+                $pathRegister = $this->getParameter('contact_json__directory');
+
+                //export file json
+                ExportContactJson::export($contact, $requestcontact, $pathRegister ,$data->getEmail());
+                exit;
+                dd($contact);
+                // $this->serializer->serialize($contact, 'json');
+
+
+
+                // $this->entityManager->flush();
             }
 
-            $this->addFlash('success', 'votre demande à bien été envoyé');
+            $this->addFlash('success', 'Votre demande a été envoyée');
 
             return $this->redirectToRoute('contact-form');
         }

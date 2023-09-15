@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ContactRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 class Contact
@@ -18,12 +19,15 @@ class Contact
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getContacts"])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getContacts"])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getContacts"])]
     private ?string $email = null;
 
     #[ORM\Column]
