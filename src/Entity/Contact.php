@@ -27,7 +27,9 @@ class Contact
     private ?string $email = null;
 
     #[ORM\Column]
-    private ?bool $webmaster = null;
+    private ?bool $webmaster = false;
+
+    private string $comment;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
@@ -94,6 +96,19 @@ class Contact
     public function setWebmaster(bool $webmaster): static
     {
         $this->webmaster = $webmaster;
+
+        return $this;
+    }
+
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(string $comment): static
+    {
+        $this->comment = $comment;
 
         return $this;
     }

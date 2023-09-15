@@ -19,7 +19,7 @@ class RequestContact
     private ?string $contentText = null;
 
     #[ORM\Column]
-    private ?bool $isValidated = null;
+    private ?bool $isValidated = false;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire de contact{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+  <h2 class="text-center m-5">Formulaire de contact</h2>
+  <div class="container my-4">
+    {{ form_start(form) }}
+      <div class="my-custom-class-for-errors">
+          {{ form_errors(form) }}
+      </div>
+      <div class="row">
+          <div class="col">
+              {{ form_row(form.lastName) }}
+          </div>
+          <div class="col" id="some-custom-id">
+              {{ form_row(form.firstName) }}
+          </div>
+          <div class="col" id="some-custom-id">
+              {{ form_row(form.email) }}
+          </div>
+      </div>
+    {{ form_end(form) }}
+
+    <div class="row">
+      <div class="col-12">
+        <a href="#" type="button" class=" text-center btn btn-light">Administration</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
