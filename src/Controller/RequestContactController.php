@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Form\RequestContactType;
+use App\Repository\ContactRepository;
 use App\Repository\RequestContactRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,37 +12,61 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RequestContactController extends AbstractController
 {
-
     private $request;
     private $requestContactRepository;
+    private $contactRepository;
 
-    public function __construct(Request $request, RequestContactRepository $requestContactRepository)
+    public function __construct(RequestContactRepository $requestContactRepository,ContactRepository $contactRepository,)
     {
-        $this->request = $request;
         $this->requestContactRepository = $requestContactRepository;
+        $this->contactRepository = $contactRepository;
     }
 
     #[Route('/admin/contacts/{id}/validationRequests', name: 'validation_request')]
-    public function updateValidationRequest($id): Response
+    public function updateValidationRequest(Request $request, $id): Response
     {
-        $requestContact = $this->requestContactRepository->getRequestAll($id);
-        dd($requestContact);
+        $formData = $request->request->all();
+        $contact = $this->contactRepository->find($id);
 
-        $form = $this->createForm(RequestContactType::class, $requestContact);
-
-        $form->handleRequest($this->request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $requestContact = $form->getData();
-            dd($requestContact);
-
-            // ... perform some action, such as saving the task to the database
-
-            return $this->redirectToRoute('task_success');
+        // Parcourez les données pour récupérer les valeurs des cases à cocher cochées
+        $checkedOptions = [];
+        foreach ($formData as $key => $value) {
+            if (strpos($key, 'isValidated') === 0 && $value === '1') {
+                $checkedOptions[] = substr($key, 9); // Pour obtenir l'ID de l'option
+            }
         }
+        $form = $this->createForm(RequestContactType::class);
 
-        return $this->renderForm('task/new.html.twig', [
+        return $this->renderForm('contact/index.html.twig', [
             'form' => $form,
+            'contact' => $contact,
         ]);
+
+
+
+
+        // dd($formData);
+
+        // $requestContact = $this->requestContactRepository->getRequestAll($id);
+
+        // $form = $this->createForm(RequestContactType::class);
+
+        // $form->handleRequest($request);
+
+        // dd($form->handleRequest($request)->getData());
+
+
+        // if ($form->isSubmitted() && $form->isValid()) {
+        //     $requestContact = $form->getData();
+        //     dd($requestContact);
+
+        //     // ... perform some action, such as saving the task to the database
+
+        //     return $this->redirectToRoute('task_success');
+        // }
+
+        // return $this->renderForm('task/new.html.twig', [
+        //     'form' => $form,
+        // ]);
     }
 }
