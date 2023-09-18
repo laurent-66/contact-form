@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ContactRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 class Contact
@@ -16,39 +16,44 @@ class Contact
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getDefault"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getContacts", "getDefault"])]
+    #[Assert\NotBlank(
+        message: "La valeur ne peut être vide."
+    )]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getContacts", "getDefault"])]
-
+    #[Assert\NotBlank(
+        message: "La valeur ne peut être vide."
+    )]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getContacts", "getDefault"])]
-
+    #[Assert\NotBlank(
+        message: "La valeur ne peut être vide."
+    )]
+    #[Assert\Email(
+        message: 'l\'email {{ value }} n\'est pas un email valide.',
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Groups(["getDefault"])]
     private ?bool $webmaster = false;
 
+    #[Assert\NotBlank(
+        message: "La question ne peut être vide."
+    )]
     private string $comment;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["getContacts", "getDefault"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["getContacts", "getDefault"])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'contact', targetEntity: RequestContact::class)]
-    #[Groups(["getContacts", "getDefault"])]
     private Collection $requestContacts;
 
     public function __construct()
