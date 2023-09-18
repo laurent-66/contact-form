@@ -16,32 +16,39 @@ class Contact
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getDefault"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getContacts"])]
+    #[Groups(["getContacts", "getDefault"])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getContacts"])]
+    #[Groups(["getContacts", "getDefault"])]
+
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getContacts"])]
+    #[Groups(["getContacts", "getDefault"])]
+
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(["getDefault"])]
     private ?bool $webmaster = false;
 
     private string $comment;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["getContacts", "getDefault"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["getContacts", "getDefault"])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'contact', targetEntity: RequestContact::class)]
+    #[Groups(["getContacts", "getDefault"])]
     private Collection $requestContacts;
 
     public function __construct()
@@ -170,4 +177,34 @@ class Contact
 
         return $this;
     }
+
+
+    public function getContentObject() {
+       $arrayObject = get_object_vars($this);
+       array_shift($arrayObject);
+        $i = 1;
+        while ($i <= 4):
+            array_pop($arrayObject);
+            $i++;
+        endwhile;
+        $arrayPropertiesRequest = $this->arrayPropertiesRequest();
+        $arrayContentObject = [...$arrayObject, ...$arrayPropertiesRequest];
+
+       return  $arrayContentObject;
+    }
+
+
+    public function arrayPropertiesRequest()
+    {
+        $arrayObject = get_object_vars($this);
+        $arrayRequestObject = array_pop($arrayObject);
+        $RequestObject = $arrayRequestObject[0];
+        $arrayPropertiesRequest = [
+            'question'=> $RequestObject->getContentText(),
+            'date_question'=> $RequestObject->getCreatedAt(),
+        ];
+
+        return $arrayPropertiesRequest;
+    }
+
 }
