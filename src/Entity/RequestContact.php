@@ -6,7 +6,7 @@ use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\RequestContactRepository;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RequestContactRepository::class)]
 class RequestContact
@@ -14,27 +14,22 @@ class RequestContact
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getDefault"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getContacts", "getDefault"])]
+    #[Assert\NotBlank]
     private ?string $contentText = null;
 
     #[ORM\Column]
-    #[Groups(["getContacts", "getDefault"])]
     private ?bool $isValidated = false;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["getContacts", "getDefault"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["getContacts", "getDefault"])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'requestContacts')]
-    #[Groups(["getDefault"])]
     private ?Contact $contact = null;
 
     public function __construct()
