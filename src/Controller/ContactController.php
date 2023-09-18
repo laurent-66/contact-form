@@ -21,17 +21,20 @@ class ContactController extends AbstractController
     private $entityManager;
     private $contactRepository;
     private $requestContactRepository;
+    private $exportContactJson;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ContactRepository $contactRepository,
         RequestContactRepository $requestContactRepository,
+        ExportContactJson $exportContactJson,
 
     ) {
 
         $this->entityManager = $entityManager;
         $this->contactRepository = $contactRepository;
         $this->requestContactRepository = $requestContactRepository;
+        $this->exportContactJson = $exportContactJson;
     } 
 
     #[Route('/', name: 'contact-form')]
@@ -59,7 +62,11 @@ class ContactController extends AbstractController
 
                 $this->entityManager->persist($contact);
                 $this->entityManager->flush();
+                
+                //export request from contact
 
+                $pathRegister = $this->getParameter('contact_json__directory');
+                $this->exportContactJson->export($contact, $pathRegister ,$data->getEmail());
 
             }else {
 
@@ -73,17 +80,13 @@ class ContactController extends AbstractController
                 $contact->setEmail($data->getEmail());
                 $contact->addRequestContact($requestcontact);
                 $this->entityManager->persist($contact);
+                $this->entityManager->flush();
+
+                //export request from contact
+
                 $pathRegister = $this->getParameter('contact_json__directory');
+                $this->exportContactJson->export($contact, $pathRegister ,$data->getEmail());
 
-                //export file json
-                ExportContactJson::export($contact, $requestcontact, $pathRegister ,$data->getEmail());
-                exit;
-                dd($contact);
-                // $this->serializer->serialize($contact, 'json');
-
-
-
-                // $this->entityManager->flush();
             }
 
             $this->addFlash('success', 'Votre demande a été envoyée');
