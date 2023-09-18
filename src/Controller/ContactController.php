@@ -64,7 +64,6 @@ class ContactController extends AbstractController
                 $this->entityManager->flush();
                 
                 //export request from contact
-
                 $pathRegister = $this->getParameter('contact_json__directory');
                 $this->exportContactJson->export($contact, $pathRegister ,$data->getEmail());
 

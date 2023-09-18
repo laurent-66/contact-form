@@ -198,7 +198,8 @@ class Contact
     {
         $arrayObject = get_object_vars($this);
         $arrayRequestObject = array_pop($arrayObject);
-        $RequestObject = $arrayRequestObject[0];
+        $arraylength = count($arrayRequestObject)-1;
+        $RequestObject = $arrayRequestObject[$arraylength];
         $arrayPropertiesRequest = [
             'question'=> $RequestObject->getContentText(),
             'date_question'=> $RequestObject->getCreatedAt(),
