@@ -3,19 +3,24 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
+use App\Entity\User;
 use App\Entity\Contact;
 use App\Entity\RequestContact;
 use App\Repository\ContactRepository;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
-    public $contactRepository;
+    private $contactRepository;
+    private $passwordHasher;
 
-    public function __construct(ContactRepository $contactRepository)
+    public function __construct(ContactRepository $contactRepository, UserPasswordHasherInterface $passwordHasher )
     {
         $this->contactRepository = $contactRepository;
+        $this->passwordHasher = $passwordHasher;
+
     }
 
     public function load(ObjectManager $manager): void
@@ -47,6 +52,20 @@ class AppFixtures extends Fixture
                 $j++;
             }
         }
+
+        $user = new User();
+        $emailRegister = 'laurent.lesage51@gmail.com';
+        $plaintextPassword = 'artmajeur';
+        $role[] = 'ROLE_ADMIN';
+
+        $passwordHashed =  $this->passwordHasher->hashPassword($user, $plaintextPassword);
+        $user->setPassword($passwordHashed);
+        $user->setEmail($emailRegister);
+        $user->setRoles($role);
+        $manager->persist($user);
+        $manager->flush();
+
+
 
     }
 }
