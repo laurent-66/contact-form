@@ -23,6 +23,7 @@ class AuthenticationController extends AbstractController
             'last_username' => $lastUsername,
             'error'         => $error,
         ]);
+
     }
 
     #[Route('/admin/logout', name: 'app_logout', methods: ['GET'])]
