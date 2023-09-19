@@ -31,7 +31,6 @@ class RequestContactController extends AbstractController
     #[Route('/admin/contacts/{id}/validationRequests', name: 'validation_request')]
     public function updateValidationRequest( Request $request, $id): Response
     {
-
         $requestContacts = $this->requestContactRepository->findByContact($id);
 
         foreach( $requestContacts as $question){
