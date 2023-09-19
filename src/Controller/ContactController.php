@@ -114,19 +114,23 @@ class ContactController extends AbstractController
     public function contact(Request $request, $id): Response
     {
         $requestAll = $this->requestContactRepository->getRequestAll($id);
-
+        dd($requestAll);
         if($requestAll){
 
             foreach( $requestAll as $requestContact ){
+                dump($requestContact);
 
-                $form = $this->createForm(RequestContactType::class, $requestContact);
-                $form->handleRequest($request);
-                if ($form->isSubmitted() && $form->isValid()) {
+                // $form = $this->createForm(RequestContactType::class, $requestContact);
+                // $form->handleRequest($request);
+                // if ($form->isSubmitted() && $form->isValid()) {
     
-                    $requestContact = $form->getData();
-                }
-    
+                //     $requestContact = $form->getData();
+
+
+                // }
+
             }
+            exit;
     
             $contact = $this->contactRepository->find($id);
             $requestCompleted = count($this->requestContactRepository->getRequestCompleted($id));
