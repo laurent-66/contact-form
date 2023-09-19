@@ -98,8 +98,6 @@ class ContactController extends AbstractController
         ]);
     }
 
-
-
     #[Route('/admin/contacts', name: 'contact-list')]
     public function contactList(): Response
     {
@@ -117,30 +115,34 @@ class ContactController extends AbstractController
     {
         $requestAll = $this->requestContactRepository->getRequestAll($id);
 
-        foreach( $requestAll as $requestContact ){
+        if($requestAll){
 
-            $form = $this->createForm(RequestContactType::class, $requestContact);
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
+            foreach( $requestAll as $requestContact ){
 
-                $requestContact = $form->getData();
+                $form = $this->createForm(RequestContactType::class, $requestContact);
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+    
+                    $requestContact = $form->getData();
+                }
+    
             }
-            // dump($requestContact);
+    
+            $contact = $this->contactRepository->find($id);
+            $requestCompleted = count($this->requestContactRepository->getRequestCompleted($id));
+            $requestToMake = count($this->requestContactRepository->getRequestToMake($id));
+    
+            return $this->renderForm('contact/index.html.twig', [
+                'contact' => $contact,
+                'requestAll' => $requestAll,
+                'requestCompleted' => $requestCompleted,
+                'requestToMake' => $requestToMake,
+                'form' => $form,
+            ]);
 
-            // return $this->redirectToRoute('contact-list');
+        } else {
+            return $this-> RedirectToRoute('contact-list');
         }
 
-        $contact = $this->contactRepository->find($id);
-        $requestCompleted = count($this->requestContactRepository->getRequestCompleted($id));
-        $requestToMake = count($this->requestContactRepository->getRequestToMake($id));
-
-
-        return $this->renderForm('contact/index.html.twig', [
-            'contact' => $contact,
-            'requestAll' => $requestAll,
-            'requestCompleted' => $requestCompleted,
-            'requestToMake' => $requestToMake,
-            'form' => $form,
-        ]);
     }
 }

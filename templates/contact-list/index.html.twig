@@ -4,8 +4,10 @@
 
 {% block body %}
 <div class="container-fluid">
-  <h2 class="text-center m-5">Liste des contacts</h2>
-  <a type="button" class="btn btn-info" href="{{path('app_logout')}}">Se déconnecter</a>
+<div class="row d-flex flex-row justify-content-between">
+  <h2 class=" m-5">Liste des contacts</h2>
+  <a class="btn btn-info my-auto mr-3" href="{{path('app_logout')}}" style="height:40px;">Se déconnecter</a>
+</div>
   <table class="table">
     <thead>
       <tr>
