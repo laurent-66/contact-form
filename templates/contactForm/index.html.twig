@@ -13,20 +13,24 @@
           <div class="col">
               {{ form_row(form.lastName) }}
           </div>
-          <div class="col" id="some-custom-id">
+          <div class="col">
               {{ form_row(form.firstName) }}
           </div>
-          <div class="col" id="some-custom-id">
+          <div class="col">
               {{ form_row(form.email) }}
           </div>
       </div>
+      <div class="row">
+        <div class="col-12">
+            {{ form_row(form.comment) }}
+        </div>
+      </div>
+      <div class="row d-flex flex-row justify-content-between px-3 ">
+              {{ form_widget(form.save) }}
+          <a href="{{path('app_login')}}" type="button" class=" text-center btn btn-light">Administration</a>
+      </div>
     {{ form_end(form) }}
 
-    <div class="row">
-      <div class="col-12">
-        <a href="{{path('app_login')}}" type="button" class=" text-center btn btn-light">Administration</a>
-      </div>
-    </div>
   </div>
 </div>
 {% endblock %}
