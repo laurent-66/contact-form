@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\RequestContactType;
 use App\Repository\ContactRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\RequestContactRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,33 +16,44 @@ class RequestContactController extends AbstractController
     private $request;
     private $requestContactRepository;
     private $contactRepository;
+    private $entityManager;
 
-    public function __construct(RequestContactRepository $requestContactRepository,ContactRepository $contactRepository,)
+    public function __construct(
+    EntityManagerInterface $entityManager,
+    RequestContactRepository $requestContactRepository,
+    ContactRepository $contactRepository,)
     {
         $this->requestContactRepository = $requestContactRepository;
         $this->contactRepository = $contactRepository;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/admin/contacts/{id}/validationRequests', name: 'validation_request')]
-    public function updateValidationRequest(Request $request, $id): Response
+    public function updateValidationRequest( Request $request, $id): Response
     {
-        $formData = $request->request->all();
-        $contact = $this->contactRepository->find($id);
 
-        // Parcourez les données pour récupérer les valeurs des cases à cocher cochées
-        $checkedOptions = [];
-        foreach ($formData as $key => $value) {
-            if (strpos($key, 'isValidated') === 0 && $value === '1') {
-                $checkedOptions[] = substr($key, 9); // Pour obtenir l'ID de l'option
+        $requestContacts = $this->requestContactRepository->findByContact($id);
+
+        foreach( $requestContacts as $question){
+            $questionId = $question->getId();
+            $requestContactType = new RequestContactType();
+            $form = $this->createForm($requestContactType , $question);
+
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+
+                $question = $form->getData();
+                $question->setIsValidated($question->getIsValidated());
+                $this->entityManager->persist($question);
             }
         }
-        $form = $this->createForm(RequestContactType::class);
 
-        return $this->renderForm('contact/index.html.twig', [
+        $this->entityManager->flush();
+
+        return $this->render('contact/index.html.twig', [
             'form' => $form,
-            'contact' => $contact,
         ]);
-
 
 
 
