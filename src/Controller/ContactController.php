@@ -111,37 +111,21 @@ class ContactController extends AbstractController
     }
 
     #[Route('/admin/contacts/{id}', name: 'contact-detail')]
-    public function contact(Request $request, $id): Response
+    public function contact($id): Response
     {
+        $contact = $this->contactRepository->find($id);
         $requestAll = $this->requestContactRepository->getRequestAll($id);
-        dd($requestAll);
+
         if($requestAll){
 
-            foreach( $requestAll as $requestContact ){
-                dump($requestContact);
-
-                // $form = $this->createForm(RequestContactType::class, $requestContact);
-                // $form->handleRequest($request);
-                // if ($form->isSubmitted() && $form->isValid()) {
-    
-                //     $requestContact = $form->getData();
-
-
-                // }
-
-            }
-            exit;
-    
-            $contact = $this->contactRepository->find($id);
             $requestCompleted = count($this->requestContactRepository->getRequestCompleted($id));
             $requestToMake = count($this->requestContactRepository->getRequestToMake($id));
     
-            return $this->renderForm('contact/index.html.twig', [
+            return $this->render('contact/index.html.twig', [
                 'contact' => $contact,
                 'requestAll' => $requestAll,
                 'requestCompleted' => $requestCompleted,
                 'requestToMake' => $requestToMake,
-                'form' => $form,
             ]);
 
         } else {
