@@ -32,30 +32,6 @@ class RequestContactController extends AbstractController
     #[Route('/admin/contacts/{id}/validationRequests', name: 'validation_request')]
     public function updateValidationRequest( Request $request, $id): Response
     {
-        dd($request);
-        
-
-
-        $requestAll = $this->requestContactRepository->getRequestAll($id);
-
-        foreach( $requestAll as $requestContact ){
-
-            $form = $this->createForm(RequestContactType::class, $requestContact);
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-
-                $requestContact = $form->getData();
-
-                $contact->addRequestContact($requestContact);
-
-            }
-
-        }
-
-
-
-
 
         $requestContacts = $this->requestContactRepository->findByContact($id);
 
@@ -70,39 +46,12 @@ class RequestContactController extends AbstractController
                 $question = $form->getData();
                 $question->setIsValidated($question->getIsValidated());
                 $this->entityManager->persist($question);
+                $this->entityManager->flush();
             }
         }
-
-        $this->entityManager->flush();
 
         return $this->render('contact/index.html.twig', [
             'form' => $form,
         ]);
-
-
-
-        // dd($formData);
-
-        // $requestContact = $this->requestContactRepository->getRequestAll($id);
-
-        // $form = $this->createForm(RequestContactType::class);
-
-        // $form->handleRequest($request);
-
-        // dd($form->handleRequest($request)->getData());
-
-
-        // if ($form->isSubmitted() && $form->isValid()) {
-        //     $requestContact = $form->getData();
-        //     dd($requestContact);
-
-        //     // ... perform some action, such as saving the task to the database
-
-        //     return $this->redirectToRoute('task_success');
-        // }
-
-        // return $this->renderForm('task/new.html.twig', [
-        //     'form' => $form,
-        // ]);
     }
 }
