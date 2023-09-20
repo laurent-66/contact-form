@@ -32,77 +32,32 @@ class RequestContactController extends AbstractController
     #[Route('/admin/contacts/{id}/validationRequests', name: 'validation_request')]
     public function updateValidationRequest( Request $request, $id): Response
     {
-        dd($request);
-        
+        $contact = $this->contactRepository->find($id);
 
+        $requestContacts =  $request->request;
+        dd($requestContacts);
+        foreach( $requestContacts as $key => $questionValidation){
+                
+                $requestObject = $this->requestContactRepository->find($key);
+                $requestObject->setIsValidated($questionValidation);
+                $this->entityManager->persist($requestObject);
+                $this->entityManager->flush();
+
+                $contact->addRequestContact($requestObject);
+                $this->entityManager->persist($contact);
+                $this->entityManager->flush();
+
+            }
 
         $requestAll = $this->requestContactRepository->getRequestAll($id);
-
-        foreach( $requestAll as $requestContact ){
-
-            $form = $this->createForm(RequestContactType::class, $requestContact);
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-
-                $requestContact = $form->getData();
-
-                $contact->addRequestContact($requestContact);
-
-            }
-
-        }
-
-
-
-
-
-        $requestContacts = $this->requestContactRepository->findByContact($id);
-
-        foreach( $requestContacts as $question){
-
-            $form = $this->createForm(RequestContactType::class , $question);
-
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-
-                $question = $form->getData();
-                $question->setIsValidated($question->getIsValidated());
-                $this->entityManager->persist($question);
-            }
-        }
-
-        $this->entityManager->flush();
+        $requestCompleted = count($this->requestContactRepository->getRequestCompleted($id));
+        $requestToMake = count($this->requestContactRepository->getRequestToMake($id));
 
         return $this->render('contact/index.html.twig', [
-            'form' => $form,
+            'contact' => $contact,
+            'requestAll' => $requestAll,
+            'requestCompleted' => $requestCompleted,
+            'requestToMake' => $requestToMake,
         ]);
-
-
-
-        // dd($formData);
-
-        // $requestContact = $this->requestContactRepository->getRequestAll($id);
-
-        // $form = $this->createForm(RequestContactType::class);
-
-        // $form->handleRequest($request);
-
-        // dd($form->handleRequest($request)->getData());
-
-
-        // if ($form->isSubmitted() && $form->isValid()) {
-        //     $requestContact = $form->getData();
-        //     dd($requestContact);
-
-        //     // ... perform some action, such as saving the task to the database
-
-        //     return $this->redirectToRoute('task_success');
-        // }
-
-        // return $this->renderForm('task/new.html.twig', [
-        //     'form' => $form,
-        // ]);
     }
 }
