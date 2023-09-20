@@ -32,26 +32,32 @@ class RequestContactController extends AbstractController
     #[Route('/admin/contacts/{id}/validationRequests', name: 'validation_request')]
     public function updateValidationRequest( Request $request, $id): Response
     {
+        $contact = $this->contactRepository->find($id);
 
-        $requestContacts = $this->requestContactRepository->findByContact($id);
-
-        foreach( $requestContacts as $question){
-
-            $form = $this->createForm(RequestContactType::class , $question);
-
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-
-                $question = $form->getData();
-                $question->setIsValidated($question->getIsValidated());
-                $this->entityManager->persist($question);
+        $requestContacts =  $request->request;
+        dd($requestContacts);
+        foreach( $requestContacts as $key => $questionValidation){
+                
+                $requestObject = $this->requestContactRepository->find($key);
+                $requestObject->setIsValidated($questionValidation);
+                $this->entityManager->persist($requestObject);
                 $this->entityManager->flush();
+
+                $contact->addRequestContact($requestObject);
+                $this->entityManager->persist($contact);
+                $this->entityManager->flush();
+
             }
-        }
+
+        $requestAll = $this->requestContactRepository->getRequestAll($id);
+        $requestCompleted = count($this->requestContactRepository->getRequestCompleted($id));
+        $requestToMake = count($this->requestContactRepository->getRequestToMake($id));
 
         return $this->render('contact/index.html.twig', [
-            'form' => $form,
+            'contact' => $contact,
+            'requestAll' => $requestAll,
+            'requestCompleted' => $requestCompleted,
+            'requestToMake' => $requestToMake,
         ]);
     }
 }
