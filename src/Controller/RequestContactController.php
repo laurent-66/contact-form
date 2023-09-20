@@ -35,11 +35,14 @@ class RequestContactController extends AbstractController
         $contact = $this->contactRepository->find($id);
 
         $requestContacts =  $request->request;
-        dd($requestContacts);
-        foreach( $requestContacts as $key => $questionValidation){
-                
-                $requestObject = $this->requestContactRepository->find($key);
-                $requestObject->setIsValidated($questionValidation);
+
+        foreach( $requestContacts as $key => $value){
+            $requestObject = $this->requestContactRepository->find($key);
+            $questionValidated = $requestObject->isIsValidated();
+
+            if($requestObject && $questionValidated === false ) {
+
+                $requestObject->setIsValidated(true);
                 $this->entityManager->persist($requestObject);
                 $this->entityManager->flush();
 
@@ -47,8 +50,11 @@ class RequestContactController extends AbstractController
                 $this->entityManager->persist($contact);
                 $this->entityManager->flush();
 
-            }
+            }   
 
+        }
+
+        $contact = $this->contactRepository->find($id);
         $requestAll = $this->requestContactRepository->getRequestAll($id);
         $requestCompleted = count($this->requestContactRepository->getRequestCompleted($id));
         $requestToMake = count($this->requestContactRepository->getRequestToMake($id));
