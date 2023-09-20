@@ -2,11 +2,9 @@
 
 namespace App\Controller;
 
-use App\Form\RequestContactType;
 use App\Repository\ContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\RequestContactRepository;
-use GuzzleHttp\Psr7\ServerRequest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RequestContactController extends AbstractController
 {
-    private $request;
     private $requestContactRepository;
     private $contactRepository;
     private $entityManager;

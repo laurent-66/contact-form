@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Contact;
 use App\Form\ContactFormType;
 use App\Entity\RequestContact;
-use App\Form\RequestContactType;
 use App\Service\ExportContactJson;
 use App\Repository\ContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -63,7 +62,6 @@ class ContactController extends AbstractController
                 $this->entityManager->persist($contact);
                 $this->entityManager->flush();
                 
-                //export request from contact
                 $pathRegister = $this->getParameter('contact_json__directory');
                 $this->exportContactJson->export($contact, $pathRegister ,$data->getEmail());
 
@@ -80,8 +78,6 @@ class ContactController extends AbstractController
                 $contact->addRequestContact($requestcontact);
                 $this->entityManager->persist($contact);
                 $this->entityManager->flush();
-
-                //export request from contact
 
                 $pathRegister = $this->getParameter('contact_json__directory');
                 $this->exportContactJson->export($contact, $pathRegister ,$data->getEmail());
